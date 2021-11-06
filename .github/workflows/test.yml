@@ -11,16 +11,16 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: Install latest nightly
-      - uses: actions-rs/toolchain@v1
+       uses: actions-rs/toolchain@v1
         with:
           toolchain: nightly
           override: true
       - name: Run cargo clean
-      - uses: actions-rs/cargo@v1
+       uses: actions-rs/cargo@v1
         with:
           command: clean
       - name: Run cargo test
-      - uses: actions-rs/cargo@v1
+        uses: actions-rs/cargo@v1
         with:
           command: test
         env:
@@ -29,6 +29,6 @@ jobs:
           RUSTDOCFLAGS: '-Cpanic=abort'
       - uses: actions-rs/grcov@v0.1
       - name: Coveralls upload
-      - uses: codecov/codecov-action@v2
+        uses: codecov/codecov-action@v2
         with:
           name: datajoint_core # optional
