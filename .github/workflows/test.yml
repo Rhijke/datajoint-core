@@ -30,5 +30,5 @@ jobs:
       - uses: actions-rs/grcov@v0.1
       - name: Coveralls upload
       - uses: codecov/codecov-action@v2
-          with:
-            name: datajoint_core # optional
+        with:
+          name: datajoint_core # optional
