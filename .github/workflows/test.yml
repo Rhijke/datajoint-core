@@ -5,44 +5,31 @@ on: [push]
 name: Code Coverage
 
 jobs:
-  build:
+  tests:
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        rust: [stable]
-        include:
-          - os: ubuntu-latest
-    env:
-      RUST_BACKTRACE: full
-      RUSTV: ${{ matrix.rust }}
-    steps:
-      - uses: actions/checkout@v2
-      - name: Install Rust ${{ matrix.rust }}
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: ${{ matrix.rust }}
-          profile: minimal
-          override: true
-      - name: Run cargo build
-        uses: actions-rs/cargo@v1
-        with:
-          command: build
-  lint:
-    runs-on: ubuntu-latest
+    needs: build
     steps:
       - uses: actions/checkout@v1
       - name: Install latest nightly
-        uses: actions-rs/toolchain@v1
+      - uses: actions-rs/toolchain@v1
         with:
           toolchain: nightly
           override: true
-          components: rustfmt, clippy
-      - uses: actions-rs/cargo@v1
+      - name: Run cargo clean
+        uses: actions-rs/cargo@v1
+        with:
+          command: clean
+      - name: Run cargo test
+        uses: actions-rs/cargo@v1
         with:
           command: test
         env:
           CARGO_INCREMENTAL: '0'
           RUSTFLAGS: '-Zprofile -Ccodegen-units=1 -Copt-level=0 -Clink-dead-code -Coverflow-checks=off -Zpanic_abort_tests -Cpanic=abort'
           RUSTDOCFLAGS: '-Cpanic=abort'
-      - uses: actions-rs/grcov@v0.1
+      - id: coverage
+        uses: actions-rs/grcov@v0.1
+      - name: Coveralls upload
+        uses: codecov/codecov-action@v2
+          with:
+            name: datajoint_core # optional
