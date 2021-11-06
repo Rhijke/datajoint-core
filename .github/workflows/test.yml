@@ -16,20 +16,19 @@ jobs:
           toolchain: nightly
           override: true
       - name: Run cargo clean
-        uses: actions-rs/cargo@v1
+      - uses: actions-rs/cargo@v1
         with:
           command: clean
       - name: Run cargo test
-        uses: actions-rs/cargo@v1
+      - uses: actions-rs/cargo@v1
         with:
           command: test
         env:
           CARGO_INCREMENTAL: '0'
           RUSTFLAGS: '-Zprofile -Ccodegen-units=1 -Copt-level=0 -Clink-dead-code -Coverflow-checks=off -Zpanic_abort_tests -Cpanic=abort'
           RUSTDOCFLAGS: '-Cpanic=abort'
-      - id: coverage
-        uses: actions-rs/grcov@v0.1
+      - uses: actions-rs/grcov@v0.1
       - name: Coveralls upload
-        uses: codecov/codecov-action@v2
+      - uses: codecov/codecov-action@v2
           with:
             name: datajoint_core # optional
