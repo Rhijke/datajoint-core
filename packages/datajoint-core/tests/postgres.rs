@@ -50,6 +50,11 @@ fn test_insert_and_retrieve_one_row() {
     let rows: Vec<TableRow> = cursor.rest();
     let cols = rows[0].columns();
 
+    if rows[0].is_empty() { assert!(false, "Failed to read one row."); }
+
+    let col_count = rows[0].column_count();
+    assert!(col_count == 2, "Column count did not equal 2");
+
     let text = match rows[0].try_decode(cols[0]) {
         Ok(data) => { data }
         Err(_) => {NativeType::None}
@@ -104,7 +109,7 @@ fn test_insert_and_retrieve_multiple_rows() {
 }
 
 #[test]
-fn test_placeholders() {
+fn test_query_with_placeholders() {
     let mut settings = ConnectionSettings::new();
     settings.database_type = DatabaseType::Postgres;
     settings.username = "postgres".to_string();
@@ -142,7 +147,7 @@ fn test_placeholders() {
 
 #[test]
 #[should_panic]
-fn test_try_query_after_disconnect() {
+fn test_query_after_disconnect() {
     let mut settings = ConnectionSettings::new();
     settings.database_type = DatabaseType::Postgres;
     settings.username = "postgres".to_string();
