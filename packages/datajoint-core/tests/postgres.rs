@@ -195,6 +195,27 @@ fn test_executor() {
             Err(_) => {}
         }
     }
+    
+    // Testing executor with placeholders
+    let placeholders: Vec<NativeType> = vec![NativeType::String("hello world".to_string()), NativeType::Int32(1234)];
+    let rows_affected = executor.execute_ph("insert into tweet (text, owner_id) values ($1, $2);", placeholders);
+    assert!(rows_affected == 1, "Rows affected did not equal 1."); 
+
+    let placeholders: Vec<NativeType> = vec![NativeType::Int32(1234)];
+    let cursor = &mut executor.cursor_ph("select * from tweet where owner_id = $1", placeholders).unwrap();
+    
+    let rows: Vec<TableRow> = cursor.rest();
+
+    for row in rows {
+        for col in row.columns() {
+            match row.try_decode(col) {
+                Ok(data) => {
+                    println!("{}", data)
+                }
+                Err(_) => {}
+            }
+        }
+    }
 
     // Fetch all rows at once without a cursor.
     let all_rows: Vec<TableRow> = executor.fetch_all("select * from tweet;");
